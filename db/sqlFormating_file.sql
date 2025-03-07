@@ -83,3 +83,12 @@ CREATE TABLE comments (
 
 use   article_title: to find   article_ID
 rearange keys afterthe fact
+
+
+
+      return db.query("CREATE TABLE articles (article_id SERIAL PRIMARY KEY UNIQUE, title VARCHAR(255) NOT NULL, topic VARCHAR(255) REFERENCES topics(slug), author VARCHAR(255) REFERENCES users(username) ON DELETE CASCADE, body TEXT NOT NULL, created_at TIMESTAMP, votes INT, article_img_url VARCHAR(1000));")
+
+
+      return db.query("CREATE TABLE comments (comment_id SERIAL PRIMARY KEY UNIQUE, body TEXT, article_id INT REFERENCES articles(article_id ) ON DELETE CASCADE, author VARCHAR(255) REFERENCES users(username) ON DELETE CASCADE, votes INT, created_at TIMESTAMP);")
+
+       return db.query("CREATE TABLE comments (comment_id SERIAL PRIMARY KEY UNIQUE, body TEXT, article_id INT REFERENCES articles(article_id ) ON DELETE CASCADE, author VARCHAR(255) REFERENCES users(username) ON DELETE CASCADE, votes INT, created_at TIMESTAMP);")

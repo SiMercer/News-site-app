@@ -13,30 +13,30 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       return db.query("DROP TABLE IF EXISTS topics;");
     })
     .then(() => {
-      return createTopicData()
+      return db.query("CREATE TABLE topics (slug VARCHAR(255) PRIMARY KEY UNIQUE, description VARCHAR(255) NOT NULL, img_url VARCHAR(1000));")
     })
     .then(() => {
-      return createUserData()
+      return db.query("CREATE TABLE users (username VARCHAR(255) PRIMARY KEY UNIQUE NOT NULL, name VARCHAR(255) NOT NULL, avatar_url VARCHAR(1000));")
     })
     .then(() => {
-      return createArticlesData()
+      return db.query("CREATE TABLE articles (article_id SERIAL PRIMARY KEY UNIQUE, title VARCHAR(255) NOT NULL, topic VARCHAR(255) REFERENCES topics(slug), author VARCHAR(255) REFERENCES users(username) ON DELETE CASCADE, body TEXT NOT NULL, created_at TIMESTAMP, votes INT, article_img_url VARCHAR(1000));")
+
     })
     .then(() => {
-      return createcommentsData()
+      return db.query("CREATE TABLE comments (comment_id SERIAL PRIMARY KEY UNIQUE, body TEXT, article_id INT REFERENCES articles(article_id ) ON DELETE CASCADE, author VARCHAR(255) REFERENCES users(username) ON DELETE CASCADE, votes INT, created_at TIMESTAMP);")
     })
     .then(() => {
       return insertTopicDataFunc()
     })
     .then(() => {
+
       return insertUserDataFunc()
     })
     .then(() => {
       return insertArticlesDataFunc()
     })
     .then(({ rows }) => {
-
       const articleIDLookup = createLookupObject(rows, "title", "article_id")
-
       const formattedCommentData = commentData.map((comment) => {
         let dateFormat = new Date(comment.created_at)
         return [articleIDLookup[comment.article_title], comment.body, comment.votes, comment.author, dateFormat]
@@ -50,26 +50,8 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
 
     })
     .catch((err) => {
-      console.log(err)
+      // console.log(err)
     });
-
-
-
-  function createTopicData() {
-    return db.query("CREATE TABLE topics (slug VARCHAR(255) PRIMARY KEY UNIQUE, description VARCHAR(255) NOT NULL, img_url VARCHAR(1000));")
-  }
-
-  function createUserData() {
-    return db.query("CREATE TABLE users (username VARCHAR(255) PRIMARY KEY UNIQUE NOT NULL, name VARCHAR(255) NOT NULL, avatar_url VARCHAR(1000));")
-  }
-
-  function createArticlesData() {
-    return db.query("CREATE TABLE articles (article_id SERIAL PRIMARY KEY UNIQUE, title VARCHAR(255) NOT NULL, topic VARCHAR(255), author VARCHAR(255) REFERENCES users(username) ON DELETE CASCADE, body TEXT NOT NULL, created_at TIMESTAMP, votes INT, article_img_url VARCHAR(1000));")
-  }
-
-  function createcommentsData() {
-    return db.query("CREATE TABLE comments (comment_id SERIAL PRIMARY KEY UNIQUE, body TEXT, article_id INT REFERENCES articles(article_id ) ON DELETE CASCADE, author VARCHAR(255) REFERENCES users(username) ON DELETE CASCADE, votes INT, created_at TIMESTAMP);")
-  }
 
 
   function insertTopicDataFunc() {
@@ -106,7 +88,6 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
     return lookup
   }
 
-  //
 
 }
 module.exports = seed;

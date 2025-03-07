@@ -1,0 +1,12 @@
+         List of relations
+ Schema |   Name    | Type  | Owner 
+--------+-----------+-------+-------
+ public | articles  | table | simon
+ public | comments  | table | simon
+ public | topicdata | table | simon
+ public | topics    | table | simon
+ public | userdata  | table | simon
+ public | users     | table | simon
+ public | usersdata | table | simon
+(7 rows)
+
