@@ -11,9 +11,9 @@ To setup this project locally a number of prerequisites step listed below are re
 
 ### Prerequisites
 
-Althought it is not the normal to describe environment files in the .gitignore list, these are listed below to help aid in the setup of this news site.
+Although it is not typical to describe environment files in the .gitignore list, they are listed below to assist in the setup of this news site.
 
-Please create the following two files in the root director containing the relative code below:
+Create the following environment files in the root director containing the relative code below:
 
 * .env.development
   ```
