@@ -1,12 +1,20 @@
 const express = require("express");
 const app = express();
-const db = require("./db/connection");
-const endpoints = require("./endpoints.json");
 
-app.get("/api", (req, res) => {
-  res.status(200).send({ endpoints });
+const apiRequest = require("./controllers/api.controllers");
+const { getTopics } = require("./controllers/topics.controllers");
+
+app.use(express.json());
+
+app.get("/api", apiRequest);
+
+app.get("/api/topics", getTopics);
+
+app.get("/api/topics", getTopics);
+
+app.use((err, req, res, next) => {
+  console.log(err);
+  res.status(500).send({ msg: "Server Error!" });
 });
-
-console.log(endpoints);
 
 module.exports = app;
