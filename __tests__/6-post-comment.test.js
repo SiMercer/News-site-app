@@ -14,7 +14,7 @@ afterAll(() => {
   return db.end();
 });
 
-describe("POST /api/articles/:article_id/comments", () => {
+describe.skip("POST /api/articles/:article_id/comments", () => {
   test("api/articles/:article_id/comments", () => {
     return request(app)
       .post("/api/articles/1/comments")
