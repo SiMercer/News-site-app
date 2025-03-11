@@ -10,7 +10,7 @@ const getArticles = (req, res, next) => {
       res.send({ data });
     })
     .catch((err) => {
-      nextvxc(err);
+      next(err);
     });
 };
 
