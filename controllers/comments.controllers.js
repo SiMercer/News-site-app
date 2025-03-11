@@ -2,8 +2,8 @@ const { publishCommentsByArticleByID } = require("../models/comments.models");
 
 const postCommentsByArticleByID = (req, res, next) => {
   publishCommentsByArticleByID(req)
-    .then((articles) => {
-      res.send({ articles });
+    .then((comment) => {
+      response.status(201).send({ comment });
     })
     .catch((err) => {
       next(err);
