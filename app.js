@@ -6,6 +6,7 @@ const { getTopics } = require("./controllers/topics.controllers");
 const {
   getArticles,
   getArticleByID,
+  getCommentsByArticleByID,
 } = require("./controllers/articals.controllers");
 
 app.use(express.json());
@@ -18,8 +19,9 @@ app.get("/api/articles", getArticles);
 
 app.get("/api/articles/:article_id", getArticleByID);
 
+app.get("/api/articles/:article_id/comments", getCommentsByArticleByID);
+
 app.use((err, req, res, next) => {
-  //   console.log(err.code);
   if (err.code === "22P02") {
     res.status(400).send({ message: "Bad request" });
   } else {
