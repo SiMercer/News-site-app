@@ -3,7 +3,10 @@ const app = express();
 
 const apiRequest = require("./controllers/api.controllers");
 const { getTopics } = require("./controllers/topics.controllers");
-const { getArticlesByID } = require("./controllers/articals.controllers");
+const {
+  getArticles,
+  getArticleByID,
+} = require("./controllers/articals.controllers");
 
 app.use(express.json());
 
@@ -11,15 +14,12 @@ app.get("/api", apiRequest);
 
 app.get("/api/topics", getTopics);
 
-app.get("/api/articles/:article_id", getArticlesByID);
+app.get("/api/articles", getArticles);
 
-// app.use((err, req, res, next) => {
-//   console.log(err);
-//   res.status(500).send({ msg: "Server Error!" });
-// });
+app.get("/api/articles/:article_id", getArticleByID);
 
 app.use((err, req, res, next) => {
-  console.log(err.code);
+  //   console.log(err.code);
   if (err.code === "22P02") {
     res.status(400).send({ message: "Bad request" });
   } else {
