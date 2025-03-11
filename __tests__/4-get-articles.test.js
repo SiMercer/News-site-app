@@ -21,24 +21,27 @@ describe("200: Testing 'GET' method for '/api/articles/' endpoint", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
-        expect(typeof body).toBe("object");
-        expect(typeof body.data[1]).toBe("object");
+        expect(body.articles).toBeInstanceOf(Array);
+        expect(body.articles.length).toBeGreaterThan(0);
+        expect(typeof body.articles[0]).toBe("object");
       });
   });
-  test("nested objects contains correct properties.", () => {
-    return request(app)
-      .get("/api/articles")
-      .expect(200)
-      .then(({ body }) => {
-        expect(typeof body.data[1].author).toBe("string");
-        expect(typeof body.data[1].title).toBe("string");
-        expect(typeof body.data[1].article_id).toBe("number");
-        expect(typeof body.data[1].created_at).toBe("string");
-        expect(typeof body.data[1].votes).toBe("number");
-        expect(typeof body.data[1].article_img_url).toBe("string");
-        expect(typeof body.data[1].comment_count).toBe("string");
+});
+test("nested objects contains correct properties.", () => {
+  return request(app)
+    .get("/api/articles")
+    .expect(200)
+    .then(({ body }) => {
+      body.articles.forEach((article) => {
+        expect(typeof article.author).toBe("string");
+        expect(typeof article.title).toBe("string");
+        expect(typeof article.article_id).toBe("number");
+        expect(typeof article.created_at).toBe("string");
+        expect(typeof article.votes).toBe("number");
+        expect(typeof article.article_img_url).toBe("string");
+        expect(typeof article.comment_count).toBe("string");
       });
-  });
+    });
 });
 
 describe("400: Testing 'GET' method for '/api/articles/' endpoint", () => {

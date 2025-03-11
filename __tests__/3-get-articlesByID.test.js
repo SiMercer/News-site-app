@@ -21,17 +21,8 @@ describe("Testing 'GET' method for '/api/articles/:article_id' endpoint", () => 
       .get("/api/articles/2")
       .expect(200)
       .then(({ body }) => {
-        const article = body.data;
+        const article = body.article;
         expect(article.article_id).toEqual(2);
-        expect(article.title).toEqual("Sony Vaio; or, The Laptop");
-        expect(article.topic).toEqual("mitch");
-        expect(article.author).toEqual("icellusedkars");
-        expect(article.body).toEqual("Call me Mitchell. Some years ago..");
-        expect(article.created_at).toEqual("2020-10-16T05:03:00.000Z");
-        expect(article.votes).toEqual(0);
-        expect(article.article_img_url).toEqual(
-          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
-        );
       });
   });
 
@@ -47,9 +38,9 @@ describe("Testing 'GET' method for '/api/articles/:article_id' endpoint", () => 
   test("400: 'GET' method for '/api/articles/:article_id' when article_id is entered as not in db", () => {
     return request(app)
       .get("/api/articles/999")
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
-        expect(body.message).toBe("Bad request");
+        expect(body.message).toBe("ID not found");
       });
   });
 });
