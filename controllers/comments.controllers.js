@@ -25,10 +25,8 @@ const getCommentsByArticleByID = (req, res, next) => {
 };
 
 const deleteCommentByID = (req, res, next) => {
-  console.log("I AM BEING CALLED");
   removeCommentByID(req)
     .then((comment) => {
-      console.log(comment);
       res.status(204).send({ comment });
     })
     .catch((err) => {

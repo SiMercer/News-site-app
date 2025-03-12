@@ -32,8 +32,6 @@ const fetchCommentsByArticleByID = (req) => {
 
 const removeCommentByID = (req) => {
   const id = req.params.comment_id;
-  console.log(id, "THIS IS MY ID");
-
   return db
     .query(`DELETE FROM comments WHERE comment_id = $1 RETURNING *`, [id])
     .then(({ rows }) => {
