@@ -26,6 +26,7 @@ const getArticleByID = (req, res, next) => {
     });
 };
 
+// MOVE getCommentsByArticleByID TO COMMENTS CONTROLLER
 const getCommentsByArticleByID = (req, res, next) => {
   const id = req.params.article_id;
   fetchCommentsByArticleByID(id)
