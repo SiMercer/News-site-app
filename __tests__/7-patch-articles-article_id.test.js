@@ -14,70 +14,81 @@ afterAll(() => {
   return db.end();
 });
 
-describe("201: POST /api/articles/:article_id/comments", () => {
-  test("add a comment for an article.", () => {
+describe("200: PATCH /api/articles/:article_id", () => {
+  test("add to vote tally.", () => {
     return request(app)
-      .post("/api/articles/1/comments")
-      .send({
-        username: "rogersop",
-        body: "thisIsMyTestComment",
-      })
-      .expect(201)
+      .patch("/api/articles/1")
+      .send({ inc_votes: 50 })
+      .expect(200)
       .then(({ body }) => {
-        const comment = body.comment;
-        const commentCreatedAt = Date.parse(comment.created_at);
-        expect(comment.comment_id).toBe(19);
-        expect(comment.body).toBe("thisIsMyTestComment");
-        expect(comment.article_id).toBe(1);
-        expect(comment.author).toBe("rogersop");
-        expect(comment.votes).toBe(0);
-        expect(commentCreatedAt).toBeGreaterThanOrEqual(Date.parse(new Date()));
+        const article = body.article[0];
+        expect(article.article_id).toBe(1);
+        expect(article.title).toBe("Living in the shadow of a great man");
+        expect(article.topic).toBe("mitch");
+        expect(article.author).toBe("butter_bridge");
+        expect(article.body).toBe("I find this existence challenging");
+        expect(article.created_at).toBe("2020-07-09T20:11:00.000Z");
+        expect(article.votes).toBe(150);
+        expect(article.article_img_url).toBe(
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        );
+      });
+  });
+
+  test("subtract from vote tally.", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: -50 })
+      .expect(200)
+      .then(({ body }) => {
+        const article = body.article[0];
+        expect(article.article_id).toBe(1);
+        expect(article.title).toBe("Living in the shadow of a great man");
+        expect(article.topic).toBe("mitch");
+        expect(article.author).toBe("butter_bridge");
+        expect(article.body).toBe("I find this existence challenging");
+        expect(article.created_at).toBe("2020-07-09T20:11:00.000Z");
+        expect(article.votes).toBe(50);
+        expect(article.article_img_url).toBe(
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        );
       });
   });
 });
 
-// describe("400: POST /api/articles/:article_id/comments", () => {
-//   test("invaild end point.", () => {
-//     return request(app)
-//       .post("/api/articles/banana/comments")
-//       .send({
-//         username: "rogersop",
-//         body: "thisIsMyTestComment",
-//       })
-//       .expect(400)
-//       .then(({ body }) => {
-//         console.log(body);
-//         expect(body.msg).toBe("Bad request");
-//       });
-//   });
-// });
+describe("400: PATCH /api/articles/:article_id", () => {
+  test("invaild end point.", () => {
+    return request(app)
+      .patch("/api/articles/banana")
+      .send({ inc_votes: 50 })
+      .expect(400)
+      .then(({ body }) => {
+        console.log(body);
+        expect(body.msg).toBe("Bad request");
+      });
+  });
 
-// describe("404: POST /api/articles/:article_id/comments", () => {
-//   test("username not found in users table.", () => {
-//     return request(app)
-//       .post("/api/articles/1/comments")
-//       .send({
-//         username: "simon",
-//         body: "thisIsMyTestComment",
-//       })
-//       .expect(404)
-//       .then(({ body }) => {
-//         console.log(body);
-//         expect(body.msg).toBe("Not found");
-//       });
-//   });
+  test("vote value NaN.", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: "fifty" })
+      .expect(400)
+      .then(({ body }) => {
+        console.log(body);
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+});
 
-//   test("articles ID not found.", () => {
-//     return request(app)
-//       .post("/api/articles/9999/comments")
-//       .send({
-//         username: "rogersop",
-//         body: "thisIsMyTestComment",
-//       })
-//       .expect(404)
-//       .then(({ body }) => {
-//         console.log(body);
-//         expect(body.msg).toBe("Not found");
-//       });
-//   });
-// });
+describe("404: PATCH /api/articles/:article_id", () => {
+  test("articles ID not found.", () => {
+    return request(app)
+      .patch("/api/articles/9999")
+      .send({ inc_votes: 50 })
+      .expect(404)
+      .then(({ body }) => {
+        console.log(body);
+        expect(body.msg).toBe("ID not found");
+      });
+  });
+});
