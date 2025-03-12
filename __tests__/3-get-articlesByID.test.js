@@ -31,7 +31,7 @@ describe("Testing 'GET' method for '/api/articles/:article_id' endpoint", () => 
       .get("/api/articles/banana")
       .expect(400)
       .then(({ body }) => {
-        expect(body.message).toBe("Bad request");
+        expect(body.msg).toBe("Bad request");
       });
   });
 
@@ -40,7 +40,7 @@ describe("Testing 'GET' method for '/api/articles/:article_id' endpoint", () => 
       .get("/api/articles/999")
       .expect(404)
       .then(({ body }) => {
-        expect(body.message).toBe("ID not found");
+        expect(body.msg).toBe("ID not found");
       });
   });
 });

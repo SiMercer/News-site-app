@@ -5,8 +5,6 @@ const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data");
 
-/* Set up your test imports here */
-
 beforeEach(() => {
   return seed(data);
 });
@@ -43,21 +41,21 @@ test("nested objects contains correct properties.", () => {
     });
 });
 
-describe("400: Testing 'GET' method for '/api/articles/' endpoint", () => {
-  test("400: 'GET' method for '/api/articles/:article_id' when article_id is entered as NaN endpoint", () => {
+describe("400: Testing 'GET' method for /api/articles/:article_id/comments endpoint", () => {
+  test("400: 'GET' method for '/api/articles/:article_id/comments' when article_id is entered as NaN endpoint", () => {
     return request(app)
       .get("/api/articles/NaN/comments")
       .expect(400)
       .then(({ body }) => {
-        expect(body.message).toBe("Bad request");
+        expect(body.msg).toBe("Bad request");
       });
   });
-  test("400: 'GET' method for '/api/articles/:article_id' when article_id is entered as not in db", () => {
+  test("400: 'GET' method for '/api/articles/:article_id/comments' when article_id is entered as not in db", () => {
     return request(app)
       .get("/api/articles/999/comments")
       .expect(404)
       .then(({ body }) => {
-        expect(body.message).toBe("ID not found");
+        expect(body.msg).toBe("ID not found");
       });
   });
 });

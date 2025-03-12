@@ -9,6 +9,10 @@ const {
   getCommentsByArticleByID,
 } = require("./controllers/articals.controllers");
 
+const {
+  postCommentsByArticleByID,
+} = require("./controllers/comments.controllers");
+
 app.use(express.json());
 
 app.get("/api", apiRequest);
@@ -21,11 +25,17 @@ app.get("/api/articles/:article_id", getArticleByID);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleByID);
 
+app.post("/api/articles/:article_id/comments", postCommentsByArticleByID);
+
 app.use((err, req, res, next) => {
+  console.log(err);
+  if (err.code === "23503") {
+    res.status(404).send({ msg: "Not found" });
+  }
   if (err.code === "22P02") {
-    res.status(400).send({ message: "Bad request" });
+    res.status(400).send({ msg: "Bad request" });
   } else {
-    res.status(err.status).send({ message: err.msg });
+    res.status(err.status).send({ msg: err.msg });
   }
 });
 
