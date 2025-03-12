@@ -15,7 +15,7 @@ afterAll(() => {
 });
 /* Set up your beforeEach & afterAll functions here */
 
-describe("GET /api", () => {
+describe("1 - CORE: GET /api", () => {
   test("200: Responds with an object detailing the documentation for each endpoint", () => {
     return request(app)
       .get("/api")
@@ -27,7 +27,7 @@ describe("GET /api", () => {
 });
 
 // 2-
-describe.skip("Testing 'GET' method for '/api/topics' endpoint", () => {
+describe("2 - CORE: GET /api/topics", () => {
   test("200: Responds with an array containing each topic", () => {
     return request(app)
       .get("/api/topics")
@@ -51,7 +51,7 @@ describe.skip("Testing 'GET' method for '/api/topics' endpoint", () => {
 
 //3
 
-describe("Testing 'GET' method for '/api/articles/:article_id' endpoint", () => {
+describe("3 - CORE: GET /api/articles/:article_id", () => {
   test("200: Responds with article of specified ID.", () => {
     return request(app)
       .get("/api/articles/2")
@@ -83,8 +83,8 @@ describe("Testing 'GET' method for '/api/articles/:article_id' endpoint", () => 
 
 //4
 
-describe("200: Testing 'GET' method for '/api/articles/' endpoint", () => {
-  test("responds with array of nested objects.", () => {
+describe("4 - CORE: GET /api/articles", () => {
+  test("200: responds with array of nested objects.", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -95,7 +95,7 @@ describe("200: Testing 'GET' method for '/api/articles/' endpoint", () => {
       });
   });
 
-  test("nested objects contains correct properties.", () => {
+  test("200: nested objects contains correct properties.", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -112,10 +112,8 @@ describe("200: Testing 'GET' method for '/api/articles/' endpoint", () => {
         });
       });
   });
-});
 
-describe("400: Testing 'GET' method for '/api/articles/' endpoint", () => {
-  test("additional Url elements added", () => {
+  test("400: additional Url elements added", () => {
     return request(app)
       .get("/api/articles/additionalUrlElementsAdded")
       .expect(400)
@@ -123,7 +121,8 @@ describe("400: Testing 'GET' method for '/api/articles/' endpoint", () => {
         expect(body.msg).toBe("Bad request");
       });
   });
-  test("return error if query used.", () => {
+
+  test("400: return error if query used.", () => {
     return request(app)
       .get("/api/articles?additionalUrl=ElementsAdded")
       .expect(400)
@@ -135,8 +134,8 @@ describe("400: Testing 'GET' method for '/api/articles/' endpoint", () => {
 
 // 5
 
-describe("200: Testing 'GET' method for /api/articles/:article_id/comments endpoint", () => {
-  test("responds with array of nested objects.", () => {
+describe("5 - CORE: GET /api/articles/:article_id/comments", () => {
+  test("200: responds with array of nested objects.", () => {
     return request(app)
       .get("/api/articles/1/comments")
       .expect(200)
@@ -146,25 +145,22 @@ describe("200: Testing 'GET' method for /api/articles/:article_id/comments endpo
         expect(typeof body.comments[0]).toBe("object");
       });
   });
-});
-test("nested objects contains correct properties.", () => {
-  return request(app)
-    .get("/api/articles/1/comments")
-    .expect(200)
-    .then(({ body }) => {
-      body.comments.forEach((comment) => {
-        expect(typeof comment.author).toBe("string");
-        expect(typeof comment.comment_id).toBe("number");
-        expect(typeof comment.votes).toBe("number");
-        expect(typeof comment.article_id).toBe("number");
-        expect(typeof comment.created_at).toBe("string");
-        expect(typeof comment.body).toBe("string");
+  test("200: nested objects contains correct properties.", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        body.comments.forEach((comment) => {
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.comment_id).toBe("number");
+          expect(typeof comment.votes).toBe("number");
+          expect(typeof comment.article_id).toBe("number");
+          expect(typeof comment.created_at).toBe("string");
+          expect(typeof comment.body).toBe("string");
+        });
       });
-    });
-});
-
-describe("400: Testing 'GET' method for /api/articles/:article_id/comments endpoint", () => {
-  test("400: 'GET' method for '/api/articles/:article_id/comments' when article_id is entered as NaN endpoint", () => {
+  });
+  test("400: if article_id is entered as NaN endpoint", () => {
     return request(app)
       .get("/api/articles/NaN/comments")
       .expect(400)
@@ -172,7 +168,7 @@ describe("400: Testing 'GET' method for /api/articles/:article_id/comments endpo
         expect(body.msg).toBe("Bad request");
       });
   });
-  test("400: 'GET' method for '/api/articles/:article_id/comments' when article_id is entered as not in db", () => {
+  test("400: if article_id is entered as not in db", () => {
     return request(app)
       .get("/api/articles/999/comments")
       .expect(404)
@@ -184,8 +180,8 @@ describe("400: Testing 'GET' method for /api/articles/:article_id/comments endpo
 
 // 6
 
-describe("201: POST /api/articles/:article_id/comments", () => {
-  test("add a comment for an article.", () => {
+describe("6 - CORE: POST /api/articles/:article_id/comments", () => {
+  test("201: add a comment for an article.", () => {
     return request(app)
       .post("/api/articles/1/comments")
       .send({
@@ -204,10 +200,8 @@ describe("201: POST /api/articles/:article_id/comments", () => {
         expect(commentCreatedAt).toBeGreaterThanOrEqual(Date.parse(new Date()));
       });
   });
-});
 
-describe("400: POST /api/articles/:article_id/comments", () => {
-  test("invaild end point.", () => {
+  test("400: invaild end point.", () => {
     return request(app)
       .post("/api/articles/banana/comments")
       .send({
@@ -219,10 +213,8 @@ describe("400: POST /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Bad request");
       });
   });
-});
 
-describe("404: POST /api/articles/:article_id/comments", () => {
-  test("username not found in users table.", () => {
+  test("404: username not found in users table.", () => {
     return request(app)
       .post("/api/articles/1/comments")
       .send({
@@ -235,7 +227,7 @@ describe("404: POST /api/articles/:article_id/comments", () => {
       });
   });
 
-  test("articles ID not found.", () => {
+  test("404: articles ID not found.", () => {
     return request(app)
       .post("/api/articles/9999/comments")
       .send({
@@ -251,8 +243,8 @@ describe("404: POST /api/articles/:article_id/comments", () => {
 
 // 7
 
-describe("200: PATCH /api/articles/:article_id", () => {
-  test("add to vote tally.", () => {
+describe("7 - CORE: PATCH /api/articles/:article_id", () => {
+  test("200: add to vote tally.", () => {
     return request(app)
       .patch("/api/articles/1")
       .send({ inc_votes: 50 })
@@ -272,7 +264,7 @@ describe("200: PATCH /api/articles/:article_id", () => {
       });
   });
 
-  test("subtract from vote tally.", () => {
+  test("200: subtract from vote tally.", () => {
     return request(app)
       .patch("/api/articles/1")
       .send({ inc_votes: -50 })
@@ -291,10 +283,8 @@ describe("200: PATCH /api/articles/:article_id", () => {
         );
       });
   });
-});
 
-describe("400: PATCH /api/articles/:article_id", () => {
-  test("invaild end point.", () => {
+  test("400: invaild end point.", () => {
     return request(app)
       .patch("/api/articles/banana")
       .send({ inc_votes: 50 })
@@ -304,7 +294,7 @@ describe("400: PATCH /api/articles/:article_id", () => {
       });
   });
 
-  test("vote value NaN.", () => {
+  test("400: vote value NaN.", () => {
     return request(app)
       .patch("/api/articles/1")
       .send({ inc_votes: "fifty" })
@@ -313,13 +303,37 @@ describe("400: PATCH /api/articles/:article_id", () => {
         expect(body.msg).toBe("Bad request");
       });
   });
-});
 
-describe("404: PATCH /api/articles/:article_id", () => {
-  test("articles ID not found.", () => {
+  test("404: articles ID not found.", () => {
     return request(app)
       .patch("/api/articles/9999")
       .send({ inc_votes: 50 })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("ID not found");
+      });
+  });
+});
+
+// 8
+
+describe("8 - CORE: DELETE /api/comments/:comment_id", () => {
+  test("204: DELETE. remove comment by ID.", () => {
+    return request(app).delete("/api/comments/2").expect(204);
+  });
+
+  test("400: invaild end point.", () => {
+    return request(app)
+      .delete("/api/comments/banana")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+
+  test("404: comment ID not found.", () => {
+    return request(app)
+      .delete("/api/comments/9999")
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("ID not found");

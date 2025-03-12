@@ -3,7 +3,6 @@ const {
   fetchArticles,
   fetchArticleByID,
   amendArticleByID,
-  fetchCommentsByArticleByID,
 } = require("../models/articles.models");
 
 const getArticles = (req, res, next) => {
@@ -39,21 +38,8 @@ const patchArticleByID = (req, res, next) => {
     });
 };
 
-// MOVE getCommentsByArticleByID TO COMMENTS CONTROLLER
-const getCommentsByArticleByID = (req, res, next) => {
-  const id = req.params.article_id;
-  fetchCommentsByArticleByID(id)
-    .then((comments) => {
-      res.send({ comments });
-    })
-    .catch((err) => {
-      next(err);
-    });
-};
-
 module.exports = {
   getArticles,
   getArticleByID,
   patchArticleByID,
-  getCommentsByArticleByID,
 };
