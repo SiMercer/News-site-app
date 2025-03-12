@@ -15,6 +15,8 @@ const {
   deleteCommentByID,
 } = require("./controllers/comments.controllers");
 
+const { getUsers } = require("./controllers/users.controllers");
+
 app.use(express.json());
 
 app.get("/api", apiRequest);
@@ -32,6 +34,8 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticleByID);
 app.post("/api/articles/:article_id/comments", postCommentsByArticleByID);
 
 app.delete("/api/comments/:comment_id", deleteCommentByID);
+
+app.get("/api/users", getUsers);
 
 app.use((err, req, res, next) => {
   if (err.code === "23503") {

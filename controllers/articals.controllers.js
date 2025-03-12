@@ -1,4 +1,3 @@
-const topics = require("../db/data/test-data/articles");
 const {
   fetchArticles,
   fetchArticleByID,
