@@ -31,7 +31,6 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticleByID);
 app.post("/api/articles/:article_id/comments", postCommentsByArticleByID);
 
 app.use((err, req, res, next) => {
-  console.log(err);
   if (err.code === "23503") {
     res.status(404).send({ msg: "Not found" });
   }
