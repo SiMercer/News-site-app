@@ -62,7 +62,7 @@ describe("3 - CORE: GET /api/articles/:article_id", () => {
       });
   });
 
-  test("400: 'GET' method for '/api/articles/:article_id' when article_id is entered as NaN endpoint", () => {
+  test("400: when article_id is entered as NaN endpoint", () => {
     return request(app)
       .get("/api/articles/banana")
       .expect(400)
@@ -71,7 +71,7 @@ describe("3 - CORE: GET /api/articles/:article_id", () => {
       });
   });
 
-  test("400: 'GET' method for '/api/articles/:article_id' when article_id is entered as not in db", () => {
+  test("400: when article_id is entered as not in db", () => {
     return request(app)
       .get("/api/articles/999")
       .expect(404)
@@ -337,6 +337,35 @@ describe("8 - CORE: DELETE /api/comments/:comment_id", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("ID not found");
+      });
+  });
+});
+
+// 9
+
+describe("9 - CORE: GET /api/users", () => {
+  test("200: responds with array of nested objects.", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.users).toBeInstanceOf(Array);
+        expect(body.users.length).toBeGreaterThan(0);
+        expect(typeof body.users[0]).toBe("object");
+      });
+  });
+
+  test("200: nested objects contain correct user properties.", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.users.length).toBeGreaterThan(0);
+        body.users.forEach((users) => {
+          expect(typeof users.username).toBe("string");
+          expect(typeof users.name).toBe("string");
+          expect(typeof users.avatar_url).toBe("string");
+        });
       });
   });
 });
