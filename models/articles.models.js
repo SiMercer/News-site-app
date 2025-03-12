@@ -27,6 +27,20 @@ const fetchArticleByID = (id) => {
     });
 };
 
+const amendArticleByID = (id, inc_votes) => {
+  return db
+    .query(
+      `UPDATE articles SET votes = votes + $2 WHERE article_id = $1 RETURNING *`,
+      [id, inc_votes]
+    )
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "ID not found" });
+      }
+      return rows;
+    });
+};
+
 const fetchCommentsByArticleByID = (id) => {
   return db
     .query(
@@ -44,5 +58,6 @@ const fetchCommentsByArticleByID = (id) => {
 module.exports = {
   fetchArticles,
   fetchArticleByID,
+  amendArticleByID,
   fetchCommentsByArticleByID,
 };

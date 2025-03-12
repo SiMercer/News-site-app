@@ -2,6 +2,7 @@ const topics = require("../db/data/test-data/articles");
 const {
   fetchArticles,
   fetchArticleByID,
+  amendArticleByID,
   fetchCommentsByArticleByID,
 } = require("../models/articles.models");
 
@@ -26,6 +27,18 @@ const getArticleByID = (req, res, next) => {
     });
 };
 
+const patchArticleByID = (req, res, next) => {
+  const id = req.params.article_id;
+  const inc_votes = req.body.inc_votes;
+  amendArticleByID(id, inc_votes)
+    .then((article) => {
+      res.send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
 // MOVE getCommentsByArticleByID TO COMMENTS CONTROLLER
 const getCommentsByArticleByID = (req, res, next) => {
   const id = req.params.article_id;
@@ -38,4 +51,9 @@ const getCommentsByArticleByID = (req, res, next) => {
     });
 };
 
-module.exports = { getArticles, getArticleByID, getCommentsByArticleByID };
+module.exports = {
+  getArticles,
+  getArticleByID,
+  patchArticleByID,
+  getCommentsByArticleByID,
+};
