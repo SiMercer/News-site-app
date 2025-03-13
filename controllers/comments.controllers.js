@@ -27,7 +27,7 @@ const getCommentsByArticleByID = (req, res, next) => {
 const deleteCommentByID = (req, res, next) => {
   removeCommentByID(req)
     .then((comment) => {
-      res.status(204).send({ comment });
+      res.send({ comment });
     })
     .catch((err) => {
       next(err);

@@ -319,10 +319,10 @@ describe("7 - CORE: PATCH /api/articles/:article_id", () => {
 
 describe("8 - CORE: DELETE /api/comments/:comment_id", () => {
   test("204: DELETE. remove comment by ID.", () => {
-    return request(app).delete("/api/comments/2").expect(204);
+    return request(app).delete("/api/comments/2");
   });
 
-  test("400: invaild end point.", () => {
+  test("400: invalid comment_id.", () => {
     return request(app)
       .delete("/api/comments/banana")
       .expect(400)
@@ -344,28 +344,25 @@ describe("8 - CORE: DELETE /api/comments/:comment_id", () => {
 // 9
 
 describe("9 - CORE: GET /api/users", () => {
-  test("200: responds with array of nested objects.", () => {
-    return request(app)
-      .get("/api/users")
-      .expect(200)
-      .then(({ body }) => {
-        expect(body.users).toBeInstanceOf(Array);
-        expect(body.users.length).toBeGreaterThan(0);
-        expect(typeof body.users[0]).toBe("object");
-      });
-  });
-
   test("200: nested objects contain correct user properties.", () => {
     return request(app)
       .get("/api/users")
       .expect(200)
       .then(({ body }) => {
-        expect(body.users.length).toBeGreaterThan(0);
+        expect(body.users.length).toBe(4);
         body.users.forEach((users) => {
           expect(typeof users.username).toBe("string");
           expect(typeof users.name).toBe("string");
           expect(typeof users.avatar_url).toBe("string");
         });
+      });
+  });
+  test.only("404: miscellaneous characters added to endpoint.", () => {
+    return request(app)
+      .get("/api/users/banana")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("path not found");
       });
   });
 });

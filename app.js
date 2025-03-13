@@ -37,6 +37,10 @@ app.delete("/api/comments/:comment_id", deleteCommentByID);
 
 app.get("/api/users", getUsers);
 
+app.all("*", (request, response, next) => {
+  response.status(404).send({ msg: "path not found" });
+});
+
 app.use((err, req, res, next) => {
   if (err.code === "23503") {
     res.status(404).send({ msg: "Not found" });
