@@ -357,7 +357,7 @@ describe("9 - CORE: GET /api/users", () => {
         });
       });
   });
-  test.only("404: miscellaneous characters added to endpoint.", () => {
+  test("404: miscellaneous characters added to endpoint.", () => {
     return request(app)
       .get("/api/users/banana")
       .expect(404)
