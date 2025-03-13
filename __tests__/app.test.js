@@ -122,12 +122,12 @@ describe("4 - CORE: GET /api/articles", () => {
       });
   });
 
-  test("400: return error if query used.", () => {
+  test("404: return error if query used.", () => {
     return request(app)
       .get("/api/articles?additionalUrl=ElementsAdded")
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Bad request");
+        expect(body.msg).toBe("Invalid Input");
       });
   });
 });
@@ -366,6 +366,140 @@ describe("9 - CORE: GET /api/users", () => {
           expect(typeof users.name).toBe("string");
           expect(typeof users.avatar_url).toBe("string");
         });
+      });
+  });
+});
+
+/////////// 10
+
+10;
+
+describe("10 - CORE: GET /api/articles (sorting queries)", () => {
+  test("200: no query responds with defaults 'sort_by=created_at' & 'order=desc.'", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBeGreaterThan(0);
+        body.articles.forEach((article) => {
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.votes).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+        });
+      });
+  });
+
+  test("200: query for 'sort_by' only, responds with default 'order=desc'", () => {
+    return request(app)
+      .get("/api/articles?sort_by=votes")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBeGreaterThan(0);
+        body.articles.forEach((article) => {
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.votes).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+        });
+      });
+  });
+
+  test("200: query for 'order' only, responds with default 'sort_by=created_at'.", () => {
+    return request(app)
+      .get("/api/articles?order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBeGreaterThan(0);
+        body.articles.forEach((article) => {
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.votes).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+        });
+      });
+  });
+
+  test("200: query for 'sort_by' & 'order' in conjunction responds'.", () => {
+    return request(app)
+      .get("/api/articles?sort_by=votes&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBeGreaterThan(0);
+        body.articles.forEach((article) => {
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.votes).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+        });
+      });
+  });
+
+  test("200: query for 'sort_by=votes&order=asc' responds correctly'.", () => {
+    return request(app)
+      .get("/api/articles?sort_by=votes&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        const article = body.articles[0];
+
+        expect(article.author).toBe("icellusedkars");
+        expect(article.title).toBe("Am I a cat?");
+        expect(article.article_id).toBe(11);
+        expect(article.created_at).toBe("2020-01-15T22:21:00.000Z");
+        expect(article.votes).toBe(0);
+        expect(article.article_img_url).toBe(
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        );
+        expect(article.comment_count).toBe("0");
+      });
+  });
+
+  test("200: query for 'sort_by=votes&order=desc' responds correctly'.", () => {
+    return request(app)
+      .get("/api/articles?sort_by=votes&order=desc")
+      .expect(200)
+      .then(({ body }) => {
+        const article = body.articles[0];
+
+        expect(article.author).toBe("butter_bridge");
+        expect(article.title).toBe("Living in the shadow of a great man");
+        expect(article.article_id).toBe(1);
+        expect(article.created_at).toBe("2020-07-09T20:11:00.000Z");
+        expect(article.votes).toBe(100);
+        expect(article.article_img_url).toBe(
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        );
+        expect(article.comment_count).toBe("11");
+      });
+  });
+
+  test("404: any query key or value not listed in 'allowedQuery' gets rejected before db.query is run, example bad key  .", () => {
+    return request(app)
+      .get("/api/articles?sort_by_maliciouscode=votes&order=asc")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid Input");
+      });
+  });
+
+  test("404: any query key or value not listed in 'allowedQuery' gets rejected before db.query is run, example bad value  .", () => {
+    return request(app)
+      .get("/api/articles?sort_by=maliciouscode&order=asc")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid Input");
       });
   });
 });

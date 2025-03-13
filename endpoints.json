@@ -10,8 +10,19 @@
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all articles",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "description": "serves an array of all articles, queries 'sort_by' and/or 'order' can be included",
+    "queries": [
+      [
+        "sort_by",
+        "article_id",
+        "title",
+        "topic",
+        "author",
+        "created_at",
+        "votes"
+      ],
+      ["order", "asc", "desc"]
+    ],
     "exampleResponse": {
       "articles": [
         {
