@@ -3,7 +3,7 @@
 This simple news site application is built with Node.js & PostgreSQL to demonstrate my ability to create, manage, and query an SQL database through Node.js.
 
 Preview: <br>
-https://news-site-app.onrender.com/api <sub> \* spinup delay on inital load </sub>
+https://news-site-app.onrender.com/api <sup> \* spinup delay on inital load. </sup>
 <br>
 
 ## Getting Started
