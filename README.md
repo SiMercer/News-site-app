@@ -3,7 +3,7 @@
 This simple news site application is built with Node.js & PostgreSQL to demonstrate my ability to create, manage, and query an SQL database through Node.js.
 
 Preview: <br>
-https://news-site-app.onrender.com/api
+https://news-site-app.onrender.com/api <sub> \* may requies inital spinup before load </sub>
 <br>
 
 ## Getting Started
@@ -54,6 +54,6 @@ This project utilizes and number of dependencies such as dotenv, express, nodemo
 #### Folder Structure
 
 - `./__tests__/` Jest testing files.
-- `./controllers/` Controller files required by endpoints
-- `./db/` Database files and subfolders
-- `./models/` Model files required by controller files
+- `./controllers/` Controller files required by endpoints.
+- `./db/` Database files and subfolders.
+- `./models/` Model files required by controller files.
