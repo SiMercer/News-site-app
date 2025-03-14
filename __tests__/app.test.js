@@ -243,7 +243,17 @@ describe("GET /api/articles/:article_id", () => {
       .expect(200)
       .then(({ body }) => {
         const article = body.article;
-        expect(article.article_id).toEqual(2);
+        expect(article.author).toBe("icellusedkars");
+        expect(article.title).toBe("Sony Vaio; or, The Laptop");
+        expect(article.article_id).toBe(2);
+        expect(article.body).toBe("Call me Mitchell. Some years ago..");
+        expect(article.topic).toBe("cats");
+        expect(article.created_at).toBe("2020-10-16T05:03:00.000Z");
+        expect(article.votes).toBe(0);
+        expect(article.article_img_url).toBe(
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        );
+        expect(article.comment_count).toBe(0);
       });
   });
 
