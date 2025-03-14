@@ -12,6 +12,12 @@ To setup this project locally a number of prerequisites step listed below are re
 
 ### Prerequisites
 
+#### Cloning git repository
+Clone repository
+  ```
+    https://github.com/SiMercer/News-site-app.git
+  ```
+
 #### Environment files
 
 Although it is not typical to describe environment files in the .gitignore list, these are listed below to assist in the setup of this news site.
@@ -31,7 +37,7 @@ Create the following environment files in the root director containing the relat
 
 #### Dependencies
 
-This project utilizes and number of dependencies such as dotenv, express, nodemon, node-postgres.
+This project utilizes and number of dependencies such as Dotenv, Express, Node.js, Nodemon, Node-postgres.
 
 ```
   npm install
