@@ -1,6 +1,6 @@
 const db = require("../db/connection");
 
-const fetchArticles = (req) => {
+const fetchArticles = (sort_by, order, topic) => {
   const allowedQuery = [
     "sort_by",
     "article_id",
@@ -13,45 +13,64 @@ const fetchArticles = (req) => {
     "asc",
     "desc",
   ];
-  let allowedQueryPassed = true;
 
-  const parmsToCheck = [];
-
-  Object.keys(req.query).forEach((objectKey) => {
-    parmsToCheck.push(objectKey);
-  });
-
-  Object.values(req.query).forEach((valueKey) => {
-    parmsToCheck.push(valueKey);
-  });
-
-  for (const value of parmsToCheck) {
-    if (!allowedQuery.includes(value)) {
-      allowedQueryPassed = false;
-      break;
-    }
-  }
-
-  if (allowedQueryPassed === false) {
-    return Promise.reject({ status: 404, msg: "Invalid Input" });
-  } else {
-    let sort_by = "created_at";
-    if (req.query.sort_by !== undefined) {
-      sort_by = req.query.sort_by;
+  let queryString = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id) AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id`;
+  const queryParamsDollas = [];
+  //WHERE
+  if (topic) {
+    topicAsArr = [];
+    if (Array.isArray(topic)) {
+      topicAsArr = [...topic];
+    } else {
+      topicAsArr.push(topic);
     }
 
-    let order = "desc";
-    if (req.query.order !== undefined) {
-      order = req.query.order;
-    }
+    let queryParamPos = 1;
 
-    const queryString = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id) AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id ORDER BY`;
-    const queryParams = ` ${sort_by} ${order}`;
+    let queryStringDollasTemp = "";
 
-    return db.query(queryString + queryParams).then(({ rows }) => {
-      return rows;
+    topicAsArr.forEach((element) => {
+      queryParamsDollas.push(element);
+      queryStringDollasTemp += "$" + queryParamPos + ", ";
+      queryParamPos++;
     });
+    const queryStringDollas = queryStringDollasTemp.slice(0, -2);
+    queryString += ` WHERE articles.topic IN (${queryStringDollas})`;
+
+    // WHERE articles.topic IN ($1, $2)
+
+    queryParamPos++;
   }
+
+  //GROUP BY
+  queryString += ` GROUP BY articles.article_id, articles.author, articles.title, articles.topic, articles.created_at, articles.votes, articles.article_img_url`;
+
+  //ORDER BY
+
+  if (allowedQuery.includes(sort_by)) {
+    queryString += ` ORDER BY ${sort_by}`;
+  } else {
+    queryString += ` ORDER BY articles.created_at`;
+  }
+
+  if (allowedQuery.includes(order)) {
+    if (order === "asc") {
+      queryString += " asc";
+    } else {
+      queryString += "  desc";
+    }
+  }
+
+  if (
+    (order && !allowedQuery.includes(order)) ||
+    (sort_by && !allowedQuery.includes(sort_by))
+  ) {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
+
+  return db.query(queryString, queryParamsDollas).then(({ rows }) => {
+    return rows;
+  });
 };
 
 const fetchArticleByID = (id) => {
