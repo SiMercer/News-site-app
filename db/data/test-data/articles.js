@@ -1,7 +1,7 @@
 module.exports = [
   {
     title: "Living in the shadow of a great man",
-    topic: "cats",
+    topic: "mitch",
     author: "butter_bridge",
     body: "I find this existence challenging",
     created_at: 1594329060000,
@@ -11,7 +11,7 @@ module.exports = [
   },
   {
     title: "Sony Vaio; or, The Laptop",
-    topic: "cats",
+    topic: "mitch",
     author: "icellusedkars",
     body: "Call me Mitchell. Some years ago..",
     created_at: 1602828180000,

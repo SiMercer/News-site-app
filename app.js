@@ -7,7 +7,7 @@ const {
   getArticles,
   getArticleByID,
   patchArticleByID,
-} = require("./controllers/articals.controllers");
+} = require("./controllers/articles.controllers");
 
 const {
   postCommentsByArticleByID,

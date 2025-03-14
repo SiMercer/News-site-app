@@ -157,7 +157,7 @@ describe("GET /api/articles", () => {
       .get("/api/articles?topic=mitch")
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles.length).toBe(10);
+        expect(body.articles.length).toBe(12);
         body.articles.forEach((article) => {
           expect(typeof article.author).toBe("string");
           expect(typeof article.title).toBe("string");
@@ -193,16 +193,18 @@ describe("GET /api/articles", () => {
       .expect(200)
       .then(({ body }) => {
         const article = body.articles[0];
-        expect(article.author).toBe("butter_bridge");
-        expect(article.title).toBe("Living in the shadow of a great man");
-        expect(article.article_id).toBe(1);
+        expect(article.author).toBe("rogersop");
+        expect(article.title).toBe(
+          "UNCOVERED: catspiracy to bring down democracy"
+        );
+        expect(article.article_id).toBe(5);
         expect(article.topic).toBe("cats");
-        expect(article.created_at).toBe("2020-07-09T20:11:00.000Z");
-        expect(article.votes).toBe(100);
+        expect(article.created_at).toBe("2020-08-03T13:14:00.000Z");
+        expect(article.votes).toBe(0);
         expect(article.article_img_url).toBe(
           "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
         );
-        expect(article.comment_count).toBe("11");
+        expect(article.comment_count).toBe("2");
       });
   });
 
@@ -247,7 +249,7 @@ describe("GET /api/articles/:article_id", () => {
         expect(article.title).toBe("Sony Vaio; or, The Laptop");
         expect(article.article_id).toBe(2);
         expect(article.body).toBe("Call me Mitchell. Some years ago..");
-        expect(article.topic).toBe("cats");
+        expect(article.topic).toBe("mitch");
         expect(article.created_at).toBe("2020-10-16T05:03:00.000Z");
         expect(article.votes).toBe(0);
         expect(article.article_img_url).toBe(
@@ -287,7 +289,7 @@ describe("PATCH /api/articles/:article_id", () => {
         const article = body.article[0];
         expect(article.article_id).toBe(1);
         expect(article.title).toBe("Living in the shadow of a great man");
-        expect(article.topic).toBe("cats");
+        expect(article.topic).toBe("mitch");
         expect(article.author).toBe("butter_bridge");
         expect(article.body).toBe("I find this existence challenging");
         expect(article.created_at).toBe("2020-07-09T20:11:00.000Z");
@@ -307,7 +309,7 @@ describe("PATCH /api/articles/:article_id", () => {
         const article = body.article[0];
         expect(article.article_id).toBe(1);
         expect(article.title).toBe("Living in the shadow of a great man");
-        expect(article.topic).toBe("cats");
+        expect(article.topic).toBe("mitch");
         expect(article.author).toBe("butter_bridge");
         expect(article.body).toBe("I find this existence challenging");
         expect(article.created_at).toBe("2020-07-09T20:11:00.000Z");
