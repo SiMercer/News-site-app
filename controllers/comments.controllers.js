@@ -2,6 +2,7 @@ const {
   publishCommentsByArticleByID,
   removeCommentByID,
   fetchCommentsByArticleByID,
+  amendCommentVotes,
 } = require("../models/comments.models");
 
 const postCommentsByArticleByID = (req, res, next) => {
@@ -15,7 +16,9 @@ const postCommentsByArticleByID = (req, res, next) => {
 };
 
 const getCommentsByArticleByID = (req, res, next) => {
-  fetchCommentsByArticleByID(req)
+  const { article_id } = request.params;
+  const { page, limit } = request.query;
+  fetchCommentsByArticleByID(article_id, page, limit)
     .then((comments) => {
       res.send({ comments });
     })
@@ -34,8 +37,22 @@ const deleteCommentByID = (req, res, next) => {
     });
 };
 
+function patchCommentVotes(request, response, next) {
+  const { comment_id } = request.params;
+  const { inc_votes } = request.body;
+
+  amendCommentVotes(inc_votes, comment_id)
+    .then((comment) => {
+      response.status(200).send({ comment: comment });
+    })
+    .catch((error) => {
+      next(error);
+    });
+}
+
 module.exports = {
   postCommentsByArticleByID,
   getCommentsByArticleByID,
   deleteCommentByID,
+  patchCommentVotes,
 };

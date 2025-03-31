@@ -61,6 +61,18 @@ const fetchArticles = (sort_by, order, topic) => {
     }
   }
 
+  if (limit) {
+    query += ` LIMIT $${queryParamCount}`;
+    queryParams.push(limit);
+    queryParamCount++;
+  }
+
+  if (page) {
+    const offset = Number(page) * Number(limit);
+    query += ` OFFSET $${queryParamCount}`;
+    queryParams.push(offset);
+  }
+
   if (
     (order && !allowedQuery.includes(order)) ||
     (sort_by && !allowedQuery.includes(sort_by))
@@ -101,6 +113,28 @@ const amendArticleByID = (id, inc_votes) => {
     });
 };
 
+function addArticle(
+  author,
+  title,
+  body,
+  topic,
+  article_img_url = "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+) {
+  const values = [author, title, body, topic, article_img_url];
+
+  return db
+    .query(
+      `INSERT INTO articles (author, title, body, topic, article_img_url) 
+        VALUES ($1, $2, $3, $4 ,$5) 
+        RETURNING *, created_at::text AS created_at `,
+      values
+    )
+    .then(({ rows }) => {
+      rows[0].comment_count = 0;
+      return rows[0];
+    });
+}
+
 const fetchCommentsByArticleByID = (id) => {
   return db
     .query(
@@ -120,4 +154,5 @@ module.exports = {
   fetchArticleByID,
   amendArticleByID,
   fetchCommentsByArticleByID,
+  addArticle,
 };

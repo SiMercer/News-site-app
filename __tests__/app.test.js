@@ -61,6 +61,27 @@ describe("GET /api/articles", () => {
       });
   });
 
+  test("200: Returns the first 10 articles only", () => {
+    return request(app)
+      .get("/api/articles?limit=10")
+      .expect(200)
+      .then(({ body }) => {
+        const articles = body.articles;
+        expect(articles.length).toBe(10);
+        expect(articles).toBeSorted("created_at", { descending: true });
+        articles.forEach((article) => {
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.votes).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("number");
+        });
+      });
+  });
+
   test("200: query for 'order' only, responds with default 'sort_by=created_at'.", () => {
     return request(app)
       .get("/api/articles?order=asc")
@@ -278,6 +299,60 @@ describe("GET /api/articles/:article_id", () => {
   });
 });
 
+// POST /api/articles/
+describe("POST /api/articles", () => {
+  test("201: Responds with object of posted article", () => {
+    const articleRequest = {
+      author: "rogersop",
+      title: "test",
+      body: "test",
+      topic: "test",
+      article_img_url: "test",
+    };
+
+    return request(app)
+      .post("/api/articles")
+      .send(articleRequest)
+      .expect(201)
+      .then(({ body }) => {
+        const currentTime = new Date();
+        const tolerance = 20;
+
+        const article = body.article;
+        const createdAt = new Date(article.created_at);
+
+        expect(article.author).toBe("icellusedkars");
+        expect(article.title).toBe("test");
+        expect(article.body).toBe("test");
+        expect(article.topic).toBe("test");
+        expect(article.article_img_url).toBe("test");
+        expect(article.article_id).toBe(14);
+        expect(article.votes).toBe(0);
+        expect(article.comment_count).toBe(0);
+
+        expect(Math.abs(currentTime - createdAt)).toBeLessThanOrEqual(
+          tolerance
+        );
+      });
+  });
+
+  test("400: Bad request when username doesn't exist", () => {
+    const articleRequest = {
+      author: "test",
+      title: "test",
+      body: "test",
+      topic: "test",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(articleRequest)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found");
+      });
+  });
+});
+
 // PATCH /api/articles/:article_id
 describe("PATCH /api/articles/:article_id", () => {
   test("200: add to vote tally.", () => {
@@ -396,6 +471,24 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 });
 
+test("200: Return 10 comments only", () => {
+  return request(app)
+    .get("/api/articles/1/comments?limit=10")
+    .expect(200)
+    .then(({ body }) => {
+      const comments = body.comments;
+      expect(comments.length).toBe(10);
+      comments.forEach((comment) => {
+        expect(typeof comment.comment_id).toBe("number");
+        expect(typeof comment.votes).toBe("number");
+        expect(typeof comment.created_at).toBe("string");
+        expect(typeof comment.author).toBe("string");
+        expect(typeof comment.body).toBe("string");
+        expect(comment.article_id).toBe(1);
+      });
+    });
+});
+
 // POST /api/articles/:article_id/comments
 describe("POST /api/articles/:article_id/comments", () => {
   test("201: add a comment for an article.", () => {
@@ -458,6 +551,60 @@ describe("POST /api/articles/:article_id/comments", () => {
   });
 });
 
+// PATCH /api/comments/:comment_id
+describe("PATCH /api/comments/:commentId", () => {
+  test("200: Increase votes to 100", () => {
+    const votesRequest = { inc_votes: 100 };
+
+    return request(app)
+      .patch("/api/comments/2")
+      .send(votesRequest)
+      .expect(200)
+      .then(({ body }) => {
+        const comment = body.comment;
+        expect(comment.comment_id).toBe(2);
+        expect(comment.article_id).toBe(1);
+        expect(comment.body).toBe(
+          "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky."
+        );
+        expect(comment.votes).toBe(24);
+        expect(comment.author).toBe("butter_bridge");
+        expect(comment.created_at).toBe("2020-10-31 03:03:00");
+      });
+  });
+
+  test("200: Responds with an object detailing the article including a votes decrease of 1", () => {
+    const votesRequest = { inc_votes: -1 };
+
+    return request(app)
+      .patch("/api/comments/1")
+      .send(votesRequest)
+      .expect(200)
+      .then(({ body }) => {
+        const comment = body.comment;
+        expect(comment.comment_id).toBe(1);
+        expect(comment.article_id).toBe(9);
+        expect(comment.body).toBe(
+          "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!"
+        );
+        expect(comment.votes).toBe(15);
+        expect(comment.author).toBe("butter_bridge");
+        expect(comment.created_at).toBe("2020-04-06 13:17:00");
+      });
+  });
+
+  test("400: Responds with bad request when a request is made to an invalid endpoint", () => {
+    const votesRequest = { inc_votes: 10 };
+    return request(app)
+      .patch("/api/comments/banana")
+      .send(votesRequest)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+});
+
 // DELETE /api/comments/:comment_id
 describe("DELETE /api/comments/:comment_id", () => {
   test("204:remove comment by ID.", () => {
@@ -496,6 +643,32 @@ describe("GET /api/users", () => {
           expect(typeof users.name).toBe("string");
           expect(typeof users.avatar_url).toBe("string");
         });
+      });
+  });
+});
+
+// GET /api/users/:username
+describe.only("GET /api/users/:username", () => {
+  test("200: Responds with a user object detailing the username, avatar_url and name", () => {
+    return request(app)
+      .get("/api/users/butter_bridge")
+      .expect(200)
+      .then(({ body }) => {
+        const user = body.user;
+        expect(user.username).toBe("butter_bridge");
+        expect(user.name).toBe("jonny");
+        expect(user.avatar_url).toBe(
+          "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+        );
+      });
+  });
+
+  test("404: Responds with not found when a valid request is made but the record does not exist", () => {
+    return request(app)
+      .get("/api/users/simon")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found");
       });
   });
 });
