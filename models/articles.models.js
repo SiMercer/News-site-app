@@ -1,6 +1,6 @@
 const db = require("../db/connection");
 
-const fetchArticles = (sort_by, order, topic) => {
+const fetchArticles = (sort_by, order, topic, p, limit) => {
   const allowedQuery = [
     "sort_by",
     "article_id",
@@ -62,15 +62,15 @@ const fetchArticles = (sort_by, order, topic) => {
   }
 
   if (limit) {
-    query += ` LIMIT $${queryParamCount}`;
-    queryParams.push(limit);
-    queryParamCount++;
+    query += ` LIMIT $${queryParamPos}`;
+    queryParamsDollas.push(limit);
+    queryParamPos++;
   }
 
-  if (page) {
+  if (p) {
     const offset = Number(page) * Number(limit);
-    query += ` OFFSET $${queryParamCount}`;
-    queryParams.push(offset);
+    query += ` OFFSET $${queryParamPos}`;
+    queryParamsDollas.push(offset);
   }
 
   if (
