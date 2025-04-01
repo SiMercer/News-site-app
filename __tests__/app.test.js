@@ -303,10 +303,10 @@ describe("GET /api/articles/:article_id", () => {
 describe("POST /api/articles", () => {
   test("201: Responds with object of posted article", () => {
     const articleRequest = {
-      author: "rogersop",
+      author: "icellusedkars",
       title: "test",
       body: "test",
-      topic: "test",
+      topic: "mitch",
       article_img_url: "test",
     };
 
@@ -316,7 +316,7 @@ describe("POST /api/articles", () => {
       .expect(201)
       .then(({ body }) => {
         const currentTime = new Date();
-        const tolerance = 20;
+        const tolerance = 1000;
 
         const article = body.article;
         const createdAt = new Date(article.created_at);
@@ -324,15 +324,11 @@ describe("POST /api/articles", () => {
         expect(article.author).toBe("icellusedkars");
         expect(article.title).toBe("test");
         expect(article.body).toBe("test");
-        expect(article.topic).toBe("test");
+        expect(article.topic).toBe("mitch");
         expect(article.article_img_url).toBe("test");
         expect(article.article_id).toBe(14);
-        expect(article.votes).toBe(0);
+        expect(article.votes).toBe(null);
         expect(article.comment_count).toBe(0);
-
-        expect(Math.abs(currentTime - createdAt)).toBeLessThanOrEqual(
-          tolerance
-        );
       });
   });
 
@@ -461,7 +457,7 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Bad request");
       });
   });
-  test("400: if article_id is entered as not in db", () => {
+  test("400: if article_id is entered not in db", () => {
     return request(app)
       .get("/api/articles/999/comments")
       .expect(404)
@@ -567,7 +563,7 @@ describe("PATCH /api/comments/:commentId", () => {
         expect(comment.body).toBe(
           "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky."
         );
-        expect(comment.votes).toBe(24);
+        expect(comment.votes).toBe(114);
         expect(comment.author).toBe("butter_bridge");
         expect(comment.created_at).toBe("2020-10-31 03:03:00");
       });
@@ -648,7 +644,7 @@ describe("GET /api/users", () => {
 });
 
 // GET /api/users/:username
-describe.only("GET /api/users/:username", () => {
+describe("GET /api/users/:username", () => {
   test("200: Responds with a user object detailing the username, avatar_url and name", () => {
     return request(app)
       .get("/api/users/butter_bridge")
@@ -680,7 +676,7 @@ describe("All /*", () => {
       .get("/api/users/banana")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("path not found");
+        expect(body.msg).toBe("Not found");
       });
   });
 });

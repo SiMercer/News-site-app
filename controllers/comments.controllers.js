@@ -1,7 +1,7 @@
 const {
   publishCommentsByArticleByID,
   removeCommentByID,
-  fetchCommentsByArticleByID,
+  fetchCommentsByArticleID,
   amendCommentVotes,
 } = require("../models/comments.models");
 
@@ -16,9 +16,9 @@ const postCommentsByArticleByID = (req, res, next) => {
 };
 
 const getCommentsByArticleByID = (req, res, next) => {
-  const { article_id } = request.params;
-  const { page, limit } = request.query;
-  fetchCommentsByArticleByID(article_id, page, limit)
+  const { article_id } = req.params;
+  const { page, limit } = req.query;
+  fetchCommentsByArticleID(article_id, page, limit)
     .then((comments) => {
       res.send({ comments });
     })
@@ -28,7 +28,8 @@ const getCommentsByArticleByID = (req, res, next) => {
 };
 
 const deleteCommentByID = (req, res, next) => {
-  removeCommentByID(req)
+  const article_id = req.params.comment_id;
+  removeCommentByID(article_id)
     .then((comment) => {
       res.send({ comment });
     })

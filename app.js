@@ -51,8 +51,8 @@ app.get("/api/users", getUsers);
 
 app.get("/api/users/:username", getUserByUsername);
 
-app.all("*", (request, response, next) => {
-  response.status(404).send({ msg: "path not found" });
+app.all("*", (req, res) => {
+  res.status(404).send({ msg: "path not found" });
 });
 
 app.use((err, req, res, next) => {

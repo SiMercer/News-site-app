@@ -118,7 +118,7 @@ function addArticle(
   title,
   body,
   topic,
-  article_img_url = "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+  article_img_url = "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
 ) {
   const values = [author, title, body, topic, article_img_url];
 

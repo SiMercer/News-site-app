@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const { checkExists } = require("../db/seeds/utils");
 
 const publishCommentsByArticleByID = (req) => {
   const articleid = req.params.article_id;
@@ -15,8 +16,11 @@ const publishCommentsByArticleByID = (req) => {
     });
 };
 
-const fetchCommentsByArticleByID = (article_id, page, limit) => {
-  const id = req.params.article_id;
+function fetchCommentsByArticleID(article_id, page, limit) {
+  let query = `SELECT comment_id, votes, created_at::text AS created_at, author, body, article_id FROM comments where article_id = $1 ORDER BY created_at DESC`;
+
+  let queryParams = [article_id];
+  let queryParamCount = 2;
 
   if (limit) {
     query += ` LIMIT $${queryParamCount}`;
@@ -29,18 +33,14 @@ const fetchCommentsByArticleByID = (article_id, page, limit) => {
     query += ` OFFSET $${queryParamCount}`;
     queryParams.push(offset);
   }
-  return db
-    .query(
-      `SELECT comment_id, votes, created_at::text AS created_at, author, body, article_id FROM comments where article_id = $1 ORDER BY created_at DESC`,
-      [article_id]
-    )
-    .then(({ rows }) => {
-      if (rows.length === 0) {
-        return Promise.reject({ status: 404, msg: "ID not found" });
-      }
-      return rows;
-    });
-};
+
+  return db.query(query, queryParams).then(({ rows }) => {
+    if (rows.length === 0) {
+      return Promise.reject({ status: 404, msg: "ID not found" });
+    }
+    return rows;
+  });
+}
 
 function amendCommentVotes(inc_votes, commentId) {
   const values = [inc_votes, commentId];
@@ -58,10 +58,11 @@ function amendCommentVotes(inc_votes, commentId) {
     });
 }
 
-const removeCommentByID = (req) => {
-  const id = req.params.comment_id;
+const removeCommentByID = (article_id) => {
   return db
-    .query(`DELETE FROM comments WHERE comment_id = $1 RETURNING *`, [id])
+    .query(`DELETE FROM comments WHERE comment_id = $1 RETURNING *`, [
+      article_id,
+    ])
     .then(({ rows }) => {
       if (rows.length === 0) {
         return Promise.reject({ status: 404, msg: "ID not found" });
@@ -72,7 +73,7 @@ const removeCommentByID = (req) => {
 
 module.exports = {
   publishCommentsByArticleByID,
-  fetchCommentsByArticleByID,
+  fetchCommentsByArticleID,
   removeCommentByID,
   amendCommentVotes,
 };
