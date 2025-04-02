@@ -58,10 +58,10 @@ function amendCommentVotes(inc_votes, commentId) {
     });
 }
 
-const removeCommentByID = (article_id) => {
+const removeCommentByID = (comment_id) => {
   return db
     .query(`DELETE FROM comments WHERE comment_id = $1 RETURNING *`, [
-      article_id,
+      comment_id,
     ])
     .then(({ rows }) => {
       if (rows.length === 0) {
