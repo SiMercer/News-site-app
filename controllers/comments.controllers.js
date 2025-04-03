@@ -18,9 +18,10 @@ const postCommentsByArticleByID = (req, res, next) => {
 const getCommentsByArticleByID = (req, res, next) => {
   const { article_id } = req.params;
   const { page, limit } = req.query;
+
   fetchCommentsByArticleID(article_id, page, limit)
     .then((comments) => {
-      res.send({ comments });
+      res.status(200).send({ comments });
     })
     .catch((err) => {
       next(err);
